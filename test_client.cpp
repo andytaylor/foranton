@@ -35,7 +35,6 @@
 #include <unistd.h>
 #include <sstream>
 
-
 #include "metrics/metrics.hpp"
 #include "message_delivery.hpp"
 #include "connection.hpp"
@@ -195,10 +194,15 @@ namespace ig {
             bool run = true;
 
             std::vector<std::thread*> consumers;
+			//OUT(std::cout << "about to loop over test_no_consumers..." << std::endl);
             for (int i = 0; i < test_no_consumers; i++) {
                 std::thread *receiver = new std::thread([&]() {
+                    //OUT(std::cout << "about to create_consumer..." << std::endl);
+                    //OUT(std::cout << "on: " << queue << std::endl);
                     auto consumer = connection -> create_consumer(queue);
+                    //OUT(std::cout << "create_consumer completed..." << std::endl);
                     while (run) {
+                        //OUT(std::cout << "running and about to receive... " << std::endl);
                         auto msg = consumer->receive();
                         //OUT(std::cout << "received \"" << msg.body() << '"' << std::endl);
                     }
@@ -336,9 +340,9 @@ namespace ig {
         }
 
         std::string gethostname_str(){
-            int HOST_NAME_MAX = 255;
-            char hostname[HOST_NAME_MAX];
-            gethostname(hostname, HOST_NAME_MAX);
+            int hnx = 255;
+            char hostname[hnx];
+            gethostname(hostname, hnx);
             return std::string(hostname);
         }
 

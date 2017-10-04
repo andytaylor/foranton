@@ -33,6 +33,7 @@
 #include <unordered_map>
 #include <thread>
 #include <utility>
+#include <condition_variable>
 
 #include "metrics/metrics.hpp"
 #include "message_delivery.hpp"

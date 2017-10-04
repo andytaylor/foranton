@@ -49,10 +49,14 @@ namespace ig {
 
     public:
         connection_factory(const std::string &url, const proton::connection_options connection_options, ig::Metrics *metrics)
-                : url_(url), connection_options_(connection_options), metrics_(metrics) {
+                : url_(url), connection_options_(connection_options), metrics_(metrics) 
+		{
+			//OUT(std::cout << "connection_factory::connection_factory" << std::endl);
         }
 
         ig::connection *createConnection(){
+			//OUT(std::cout << "connection_factory::createConnection" << std::endl);
+			//OUT(std::cout << "url:" << url_ << std::endl);
             return new ig::connection(url_, connection_options_, metrics_);
         }
 

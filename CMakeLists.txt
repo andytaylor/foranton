@@ -6,6 +6,7 @@ include(CheckSymbolExists)
 project(untitled3)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS ${CMAKE_CXX_FLAGS} "-pthread")
 
 set(INC_FILES ${INC_FILES}
         atomic/atomic.hpp
@@ -61,7 +62,8 @@ set(IG_LIBS ${IG_LIBS} ${LIBUV_LIBRARY})
 #file(GLOB LIBRARIES "/usr/local/lib/librdkafka.dylib")
 #file(GLOB LIBRARIES "/usr/local/lib/librdkafka++.dylib")
 
-file(GLOB LIBRARIES "/usr/local/lib64/libqpid*.dylib" "/usr/local/lib/librdkafka.dylib" "/usr/local/lib/librdkafka++.dylib")
+#file(GLOB LIBRARIES "/usr/local/lib64/libqpid*.dylib" "/usr/local/lib/librdkafka.dylib" "/usr/local/lib/librdkafka++.dylib")
+file(GLOB LIBRARIES "/usr/local/lib64/libqpid*.so" "/usr/lib64/librdkafka.so" "/usr/lib64/librdkafka++.so")
 
 message("LIBRARIES = ${LIBRARIES}")
 

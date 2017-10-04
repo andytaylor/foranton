@@ -1,0 +1,11 @@
+connect.url=amqp://192.168.2.221
+
+test.timeout.ms=1200000000
+test.producer.count=1
+test.producer.address=example
+test.consumer.count=1
+test.consumer.queue=example
+
+metrics.report.kafka=false
+metrics.report.console=false
+metrics.report.influx=false

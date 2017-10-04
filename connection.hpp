@@ -67,7 +67,10 @@ namespace ig {
 
     public:
         connection(const std::string &url, const proton::connection_options connection_options, ig::Metrics *metrics)
-                : url_(url), connection_options_(connection_options), metrics_(metrics) {}
+                : url_(url), connection_options_(connection_options), metrics_(metrics)
+	 	{
+            //OUT(std::cout << "just inside ig:connection::connection"  << std::endl);
+		}
 
         // == messaging_handler overrides, only called in proton hander thread
 
@@ -76,15 +79,18 @@ namespace ig {
         // container::connect().
         // See @ref multithreaded_client_flow_control.cpp for an example.
         void on_container_start(proton::container &container) override {
+            //OUT(std::cout << "just inside ig:connection::on_container_start "  << std::endl);
             container.connect(url_, connection_options_);
         }
 
 
         void on_connection_open(proton::connection &connection) override {
+            //OUT(std::cout << "just inside ig:connection::on_connection_open "  << std::endl);
             connection_ = connection;
         }
 
         void on_message(proton::delivery &dlv, proton::message &msg) override {
+            //OUT(std::cout << "just inside ig:connection::on_message "  << std::endl);
             std::lock_guard<std::mutex> l(lock_);
             ig::consumer *con = consumers[dlv.receiver().name()];
             if (con != NULL) {
@@ -94,25 +100,45 @@ namespace ig {
 
 
         void on_error(const proton::error_condition &e) override {
-            OUT(std::cerr << "unexpected error: " << e << std::endl);
+            //OUT(std::cerr << "unexpected error: " << e << std::endl);
             exit(1);
         }
 
         producer *create_producer(std::string address) {
+            //OUT(std::cout << "just inside ig:connection::create_producer "  << std::endl);
             std::lock_guard<std::mutex> l(lock_);
-            while (!connection_) std::this_thread::sleep_for(std::chrono::seconds(1));
+            //OUT(std::cout << "ig:connection::create_producer guard locked"  << std::endl);
+            while (!connection_) 
+			{
+            	//OUT(std::cout << "ig:connection::create_producer while !connection pre-sleep"  << std::endl);
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+            	//OUT(std::cout << "ig:connection::create_producer while !connection post-sleep"  << std::endl);
+			}
+           	//OUT(std::cout << "ig:connection::create_producer done while about to new producer" << std::endl);
             producer *aProducer = new producer(connection_.open_sender(address));
-
+           	//OUT(std::cout << "ig:connection::create_producer newed producer" << std::endl);
             producers[aProducer->sender().name()] = aProducer;
+           	//OUT(std::cout << "ig:connection::create_producer added newed consumer to producers array" << std::endl);
             return aProducer;
         }
 
 
         consumer *create_consumer(std::string queue) {
+            //OUT(std::cout << "just inside ig:connection::create_consumer "  << std::endl);
+            //OUT(std::cout << "for: "  << queue << std::endl);
             std::lock_guard<std::mutex> l(lock_);
-            while (!connection_) std::this_thread::sleep_for(std::chrono::seconds(1));
+            //OUT(std::cout << "ig:connection::create_consumer guard locked"  << std::endl);
+            while (!connection_) 
+			{
+            	//OUT(std::cout << "ig:connection::create_consumer while !connection pre-sleep"  << std::endl);
+				std::this_thread::sleep_for(std::chrono::seconds(1));
+            	//OUT(std::cout << "ig:connection::create_consumer while !connection post-sleep"  << std::endl);
+			}
+           	//OUT(std::cout << "ig:connection::create_consumer done while about to new consumer" << std::endl);
             consumer *aConsumer = new consumer(connection_.open_receiver(queue), metrics_);
+           	//OUT(std::cout << "ig:connection::create_consumer newed consumer" << std::endl);
             consumers[aConsumer->receiver().name()] = aConsumer;
+           	//OUT(std::cout << "ig:connection::create_consumer added newed consumer to consumers array" << std::endl);
             return aConsumer;
         }
 
